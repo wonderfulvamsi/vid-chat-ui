@@ -7,7 +7,7 @@ const Container = styled.div`
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    overflow: hidden;
+    overflow: scroll;
 `;
 
 const StyledVideo = styled.video`

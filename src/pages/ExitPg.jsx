@@ -6,7 +6,7 @@ function ExitPg() {
     <div className='pg-mainContainer'>
      <div className="the-box" style={{display:"flex", flexDirection:"column", justifyContent:"start"}}>
       <h2>You've Exited The Room</h2>
-      <Link to="/login" style={{ textDecoration: "none"}}>
+      <Link to="/home" style={{ textDecoration: "none"}}>
       <button style={{height:"40px", width:"200px"}}>HOME</button>
       </Link>
       

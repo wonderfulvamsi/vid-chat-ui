@@ -82,6 +82,19 @@ body > iframe {
   overflow: hidden;
 }
 
+ /* Hide the scrollbar for WebKit-based browsers */
+ .allVideosContainer::-webkit-scrollbar {
+  width: 0em; /* Set the width of the invisible scrollbar */
+}
+
+.allVideosContainer::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Set the thumb color to transparent */
+}
+
+.allVideosContainer ::-webkit-scrollbar-track {
+  background-color: transparent; /* Set the track color to transparent */
+}
+
 .chat-pg-left-bottom{
   height:10vh;
   width: 100%;

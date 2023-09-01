@@ -59,7 +59,7 @@ function Pannel({socket ,userStream}) {
       if (videoTrack) {
         videoTrack.stop();
       }
-      document.getElementById('go-to-home').click()
+      document.getElementById('go-to-exit').click()
       socket.disconnect()
     }
     else{
@@ -74,7 +74,7 @@ function Pannel({socket ,userStream}) {
       <button id='camBtn' style={{height:"50px", width:"50px", borderRadius:"50px", backgroundColor:"#068FFF", border:"0"}} onClick={toggleCAM}><VideocamIcon style={{ color: "white" }}/></button>
       <button id='micBtn' style={{height:"50px", width:"50px", marginLeft:"20px", marginRight:"20px", borderRadius:"50px", backgroundColor:"#068FFF", border:"0"}} onClick={toggleMIC}><MicIcon style={{ color: "white" }}/></button>
       <button id='endBtn' style={{height:"50px", width:"50px", borderRadius:"50px", backgroundColor:"#494F57", border:"0"}} onClick={endCall}><CallEndIcon style={{ color: "white" }}/></button>
-      <Link id='go-to-home' to='/home'/>
+      <Link id='go-to-exit' to='/exit'/>
     </div>
   )
 }

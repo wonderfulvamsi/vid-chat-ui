@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Msg from '../components/Msg'
 import ScrollToBottom from "react-scroll-to-bottom";
+import axios from 'axios'
+import {useToken} from '../TokenContext';
 
 function ChatBar({socket, roomid, username}) {
-
+  const url = "http://localhost:3002";
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [userSocketID, setUserSocketID] = useState('');
+  const { access, setAccess, refresh, setRefresh } = useToken();
 
   //send msg
   const sendMsg = async (messageData)=>{
@@ -17,7 +20,7 @@ function ChatBar({socket, roomid, username}) {
         console.log("Couldn't send msg", err);
     }
   }
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
       if (inputText !== "") {
           const messageData = {
               roomid: roomid,
@@ -31,6 +34,38 @@ function ChatBar({socket, roomid, username}) {
           sendMsg(messageData);
           setMessages((list) => [...list, messageData]);
           setInputText("");
+
+          try{
+            await axios.post(url+"/room/"+roomid+"/"+username+"/send_message",{
+                msg: messageData,
+                "authorization": `Bearer ${access}`,}
+                )
+          }
+          catch(err){
+                console.log("token expired", err)
+                try{
+                    //token expired 
+                const re_response = await axios.post(url+"/auth/jwt/refresh",{
+                    token : refresh
+                })
+                console.log("refreshing", re_response)
+                    setAccess(re_response.data.accessToken)
+                    setRefresh(re_response.data.refreshToken)
+                    console.log("Sucessfull refreshed!")
+                    const f = await axios.post(url+"/room/"+roomid+"/"+username+"/send_message",{
+                            msg: messageData,
+                            "authorization": `Bearer ${re_response.data.accessToken}`,
+                        }
+                    )
+                    console.log("yay!", f)
+                }
+                
+                catch(err){
+                    alert("Login Again!");
+                }
+          }
+
+          
         }
       }
   
@@ -59,6 +94,40 @@ function ChatBar({socket, roomid, username}) {
         setUserSocketID(socket.id);
     }
   }, [socket]);
+
+  useEffect(()=>{
+    const getPrevMsgs = async()=>{
+        try{
+            const f = await axios.post(url+"/room/"+roomid+"/"+username+"/get_messages",
+            {
+                "authorization": `Bearer ${access}`,
+            }
+            )
+            setMessages(f.data);
+        }
+        catch(err){
+            try{
+            //token expired 
+            const re_response = await axios.post(url+"/auth/jwt/refresh",{
+                token : refresh
+            })
+            console.log("refreshing", re_response)
+            setAccess(re_response.data.accessToken)
+                setRefresh(re_response.data.refreshToken)
+                console.log("Sucessfull refreshed!")
+                const f = await axios.post(url+"/room/"+roomid+"/"+username+"/get_messages",{
+                    "authorization": `Bearer ${re_response.data.accessToken}`,
+                })
+                console.log("fucked", f)
+                setMessages(f.data);
+            }
+            catch(err){
+                alert("Login Again!");
+            }
+        }
+    } 
+    getPrevMsgs();
+  },[]);
 
   return (
     <div className="chatbar">
